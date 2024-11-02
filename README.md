@@ -1,6 +1,11 @@
+# Gists
 
+Collection of various scripts.
 
-
+## File mapper
 prerequisites:
+- entr
 
-entr
+## Action checker
+prerequisites:
+- gh cli
