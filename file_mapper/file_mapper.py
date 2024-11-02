@@ -45,4 +45,3 @@ if __name__ == "__main__":
     # Get the changed file from the command line arguments
     changed_file = sys.argv[1]
     run_pytest_on_mapped_file(changed_file)
-
