@@ -1,10 +1,7 @@
 import pytest
-from pathlib import Path
-import sys
-import os
 
 # Assuming the original file is named test_mapper.py
-from file_mapper import convert_filename, map_to_test_file, run_pytest_on_mapped_file
+from file_mapper import convert_filename, map_to_test_file
 
 def test_convert_filename_simple():
     """Test simple filename conversion"""

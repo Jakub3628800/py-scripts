@@ -12,4 +12,3 @@ file_mapper:
 .PHONY: make_commit
 make_commit:
 	$(MAKE) -C make_commit
-
