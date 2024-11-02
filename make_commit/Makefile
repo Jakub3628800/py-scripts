@@ -5,7 +5,7 @@ all: test
 
 # Run tests with verbose output
 test:
-	pytest -v
+	uv run pytest -v
 
 # Watch for changes in Python files and run file_mapper.py
 watch:
