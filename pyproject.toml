@@ -1,7 +1,7 @@
 [project]
 name = "gists"
 version = "0.1.0"
-description = "Add your description here"
+description = "Collection of scripts."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
