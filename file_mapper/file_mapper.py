@@ -8,7 +8,7 @@ def convert_filename(filename: str) -> str:
     all_: List[str] = filename.split("/")
     all_ = [f"test_{i}" for i in all_]
     all_ = "/".join(all_)
-    return f"tests/unit/{all_}".strip("\n")
+    return f"tests/{all_}".strip("\n")
 
 
 def main(argv: List[str]) -> Optional[str]:
@@ -16,7 +16,7 @@ def main(argv: List[str]) -> Optional[str]:
         line: str = argv[1]
         if "__pycache__" in line or ".pyc" in line:
             return None
-        elif line.startswith("tests/unit"):
+        elif line.startswith("tests"):
             return line
         else:
             return convert_filename(line)
@@ -29,6 +29,7 @@ def main(argv: List[str]) -> Optional[str]:
 
 
 if __name__ == "__main__":
+    #print("running")
     result: Optional[str] = main(sys.argv)
     if result:
         print(result)
