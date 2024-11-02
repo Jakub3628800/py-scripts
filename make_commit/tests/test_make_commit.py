@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import patch, MagicMock
-import make_commit
+from make_commit import make_commit
 
 @pytest.fixture
 def mock_response():
