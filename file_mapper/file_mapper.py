@@ -1,25 +1,22 @@
 import os
 import sys
 import subprocess
-from typing import List, Optional
-
-
-def convert_filename(filename: str) -> str:
-    """Convert a source file name to its corresponding test file path."""
-    all_parts: List[str] = filename.split("/")
-    all_parts = [f"test_{part}" for part in all_parts]
-    return f"tests/{'/'.join(all_parts)}".strip("\n")
-
+import glob
+from typing import  Optional
 
 def map_to_test_file(changed_file: str) -> Optional[str]:
     """Map a source file to its corresponding test file, if applicable."""
     if "__pycache__" in changed_file or changed_file.endswith(".pyc"):
         return None
-    elif changed_file.startswith("tests"):
-        return changed_file
-    else:
-        return convert_filename(changed_file)
 
+    if changed_file.startswith("tests"):
+        return changed_file
+
+    all_parts = [f"test_{part}" for part in changed_file.split("/")]
+    a = '/'.join(all_parts)
+    for match in glob.glob(f"tests/*/{a}"):
+        return match
+    return None
 
 def run_pytest_on_mapped_file(changed_file: str) -> None:
     """Run pytest on the mapped test file, if applicable."""

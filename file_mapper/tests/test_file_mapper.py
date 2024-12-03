@@ -1,61 +1,91 @@
 import pytest
+from unittest.mock import patch
 
-# Assuming the original file is named test_mapper.py
-from file_mapper import convert_filename, map_to_test_file
+from file_mapper import map_to_test_file
 
-def test_convert_filename_simple():
-    """Test simple filename conversion"""
-    assert convert_filename("file.py") == "tests/test_file.py"
+@pytest.mark.parametrize("test_case", [
+    ("__pycache__/something.py", None),
+    ("file.pyc", None),
+    ("tests/test_utils.py", "tests/test_utils.py"),
+])
+def test_special_cases(test_case):
+    """Test cases that don't require glob mocking (pycache, pyc, existing tests)."""
+    input_file, expected = test_case
+    assert map_to_test_file(input_file) == expected
 
-def test_convert_filename_with_path():
-    """Test conversion of file with path"""
-    assert convert_filename("src/utils/file.py") == "tests/test_src/test_utils/test_file.py"
+@pytest.mark.parametrize("test_case", [
+    # (input_file, glob_pattern, glob_returns, expected_output)
+    (
+        "utils.py",
+        "tests/*/test_utils.py",
+        ["tests/unit/test_utils.py"],
+        "tests/unit/test_utils.py"
+    ),
+    (
+        "models/user.py",
+        "tests/*/test_models/test_user.py",
+        ["tests/unit/test_models/test_user.py"],
+        "tests/unit/test_models/test_user.py"
+    ),
+    (
+        "api/v1/endpoints.py",
+        "tests/*/test_api/test_v1/test_endpoints.py",
+        ["tests/integration/test_api/test_v1/test_endpoints.py"],
+        "tests/integration/test_api/test_v1/test_endpoints.py"
+    ),
+    # Test case where no matching test file exists
+    (
+        "utils.py",
+        "tests/*/test_utils.py",
+        [],
+        None
+    ),
+    # Multiple matches should return the first one
+    (
+        "common.py",
+        "tests/*/test_common.py",
+        [
+            "tests/unit/test_common.py",
+            "tests/integration/test_common.py"
+        ],
+        "tests/unit/test_common.py"
+    ),
+])
+def test_glob_matches(test_case):
+    """Test cases that require glob mocking."""
+    input_file, expected_pattern, glob_returns, expected = test_case
 
-def test_map_to_test_file_pycache():
-    """Test mapping of __pycache__ files"""
-    assert map_to_test_file("__pycache__/file.pyc") is None
-    assert map_to_test_file("src/__pycache__/file.py") is None
+    with patch('glob.glob') as mock_glob:
+        mock_glob.return_value = glob_returns
+        result = map_to_test_file(input_file)
 
-def test_map_to_test_file_pyc():
-    """Test mapping of .pyc files"""
-    assert map_to_test_file("file.pyc") is None
-    assert map_to_test_file("src/file.pyc") is None
+        # Verify the result
+        assert result == expected
 
-def test_map_to_test_file_test_files():
-    """Test mapping of existing test files"""
-    test_file = "tests/test_file.py"
-    assert map_to_test_file(test_file) == test_file
+        # Verify glob was called with correct pattern
+        mock_glob.assert_called_once_with(expected_pattern)
 
-def test_map_to_test_file_source_files():
-    """Test mapping of source files to test files"""
-    assert map_to_test_file("file.py") == "tests/test_file.py"
-    assert map_to_test_file("src/utils/file.py") == "tests/test_src/test_utils/test_file.py"
+def test_multiple_calls():
+    """Test that the function works correctly when called multiple times."""
+    with patch('glob.glob') as mock_glob:
+        # First call
+        mock_glob.return_value = ["tests/unit/test_a.py"]
+        assert map_to_test_file("a.py") == "tests/unit/test_a.py"
+        mock_glob.assert_called_with("tests/*/test_a.py")
 
-@pytest.fixture
-def mock_subprocess(mocker):
-    """Fixture to mock subprocess.run"""
-    return mocker.patch('subprocess.run')
+        # Second call
+        mock_glob.return_value = []
+        assert map_to_test_file("b.py") is None
+        mock_glob.assert_called_with("tests/*/test_b.py")
 
-@pytest.fixture
-def mock_print(mocker):
-    """Fixture to mock print function"""
-    return mocker.patch('builtins.print')
+        # Verify total number of calls
+        assert mock_glob.call_count == 2
 
-#def test_run_pytest_on_mapped_file_with_test(mock_subprocess, mock_print):
-#    """Test running pytest on a valid mapped file"""
-#    run_pytest_on_mapped_file("src/file.py")
-#    mock_subprocess.assert_called_once_with(["pytest", "tests/test_src/test_file.py"])
-#    mock_print.assert_called_once_with("Running tests for tests/test_src/test_file.py")
-#
-#def test_run_pytest_on_mapped_file_no_test(mock_subprocess, mock_print):
-#    """Test running pytest on a file that doesn't map to a test"""
-#    run_pytest_on_mapped_file("__pycache__/file.pyc")
-#    mock_subprocess.assert_not_called()
-#    mock_print.assert_called_once_with("No test file mapped for __pycache__/file.pyc. Skipping pytest.")
-#
-#def test_run_pytest_on_mapped_file_absolute_path(mock_subprocess, mock_print):
-#    """Test running pytest with absolute path input"""
-#    abs_path = os.path.abspath("src/file.py")
-#    run_pytest_on_mapped_file(abs_path)
-#    mock_subprocess.assert_called_once_with(["pytest", "tests/test_src/test_file.py"])
-#    mock_print.assert_called_once_with("Running tests for tests/test_src/test_file.py")
+def test_nested_directory_structure():
+    """Test handling of deeply nested directory structures."""
+    with patch('glob.glob') as mock_glob:
+        # Deep nesting
+        mock_glob.return_value = ["tests/unit/test_deep/test_nested/test_file.py"]
+        result = map_to_test_file("deep/nested/file.py")
+        assert result == "tests/unit/test_deep/test_nested/test_file.py"
+        mock_glob.assert_called_with("tests/*/test_deep/test_nested/test_file.py")
