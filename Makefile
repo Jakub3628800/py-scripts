@@ -19,4 +19,6 @@ webp_converter:
 
 .PHONY: install
 install:
-	$(MAKE) -C webp_converter symlink
+	ln -sf $(PWD)/webp_converter/webp_converter.py ~/.local/bin/webp_converter.py
+	ln -sf $(PWD)/make_commit/make_commit.py ~/.local/bin/make_commit.py
+	ln -sf $(PWD)/file_mapper/file_mapper.py ~/.local/bin/file_mapper.py
