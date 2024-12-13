@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 from PIL import Image
 import os
 import argparse
@@ -5,35 +6,44 @@ import argparse
 def convert_webp_to_jpg(input_path, output_path=None):
     """
     Convert a WebP image to JPG format
-
     Args:
         input_path (str): Path to input WebP file
         output_path (str, optional): Path for output JPG file. If not provided,
                                    will save to current directory
+    Raises:
+        FileNotFoundError: If the input file doesn't exist
+        IOError: If there's an error reading or writing the image
+        ValueError: If the input file is not a valid image
     """
+    # Check if input file exists
+    if not os.path.exists(input_path):
+        raise FileNotFoundError(f"Input file not found: {input_path}")
+
+    # If output path not provided, use current directory
+    if output_path is None:
+        # Get just the filename without path
+        filename = os.path.basename(input_path)
+        # Replace .webp extension with .jpg
+        jpg_filename = os.path.splitext(filename)[0] + '.jpg'
+        # Save to current directory
+        output_path = os.path.join(os.getcwd(), jpg_filename)
+
+    # Open and convert the image
     try:
-        # Open the WebP image
         img = Image.open(input_path)
+    except IOError as e:
+        raise ValueError(f"Invalid or corrupt image file: {input_path}") from e
 
-        # If output path not provided, use current directory
-        if output_path is None:
-            # Get just the filename without path
-            filename = os.path.basename(input_path)
-            # Replace .webp extension with .jpg
-            jpg_filename = os.path.splitext(filename)[0] + '.jpg'
-            # Save to current directory
-            output_path = os.path.join(os.getcwd(), jpg_filename)
+    # Convert to RGB if necessary
+    if img.mode in ('RGBA', 'LA') or (img.mode == 'P' and 'transparency' in img.info):
+        img = img.convert('RGB')
 
-        # Convert and save as JPG
-        # If image has transparency, convert to RGB first
-        if img.mode in ('RGBA', 'LA') or (img.mode == 'P' and 'transparency' in img.info):
-            img = img.convert('RGB')
-
+    # Save as JPG
+    try:
         img.save(output_path, 'JPEG', quality=95)
         print(f"Successfully converted {input_path} to {output_path}")
-
-    except Exception as e:
-        print(f"Error converting {input_path}: {str(e)}")
+    except IOError as e:
+        raise IOError(f"Error saving output file: {output_path}") from e
 
 if __name__ == "__main__":
     # Set up argument parser
@@ -45,4 +55,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Convert the image
-    convert_webp_to_jpg(args.input, args.output)
+    try:
+        convert_webp_to_jpg(args.input, args.output)
+    except (FileNotFoundError, ValueError, IOError) as e:
+        print(f"Error: {str(e)}")
+        exit(1)
