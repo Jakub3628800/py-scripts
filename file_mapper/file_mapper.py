@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import os
 import sys
 import subprocess
@@ -14,8 +15,17 @@ def map_to_test_file(changed_file: str) -> Optional[str]:
 
     all_parts = [f"test_{part}" for part in changed_file.split("/")]
     a = '/'.join(all_parts)
+    print(a)
     for match in glob.glob(f"tests/*/{a}"):
         return match
+
+    parts = changed_file.split("/")
+    parts[-1] = f"test_{parts[-1]}"
+    print(parts)
+
+    for match in glob.glob(f"tests/*{'/'.join(parts)}"):
+        return match
+
     return None
 
 def run_pytest_on_mapped_file(changed_file: str) -> None:
@@ -24,7 +34,9 @@ def run_pytest_on_mapped_file(changed_file: str) -> None:
     relative_changed_file = os.path.relpath(changed_file)
 
     # Map to corresponding test file
+    print(relative_changed_file)
     mapped_test_file = map_to_test_file(relative_changed_file)
+    print(mapped_test_file)
 
     # Only run pytest if there’s a mapped test file
     if mapped_test_file:
