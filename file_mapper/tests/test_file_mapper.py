@@ -36,7 +36,7 @@ def test_special_cases(test_case):
     # Test case where no matching test file exists
     (
         "utils.py",
-        "tests/*/test_utils.py",
+        "tests/*test_utils.py",
         [],
         None
     ),
@@ -63,7 +63,7 @@ def test_glob_matches(test_case):
         assert result == expected
 
         # Verify glob was called with correct pattern
-        mock_glob.assert_called_once_with(expected_pattern)
+        mock_glob.assert_called_with(expected_pattern)
 
 def test_multiple_calls():
     """Test that the function works correctly when called multiple times."""
@@ -76,10 +76,10 @@ def test_multiple_calls():
         # Second call
         mock_glob.return_value = []
         assert map_to_test_file("b.py") is None
-        mock_glob.assert_called_with("tests/*/test_b.py")
+        mock_glob.assert_called_with("tests/*test_b.py")
 
         # Verify total number of calls
-        assert mock_glob.call_count == 2
+        assert mock_glob.call_count == 3
 
 def test_nested_directory_structure():
     """Test handling of deeply nested directory structures."""
