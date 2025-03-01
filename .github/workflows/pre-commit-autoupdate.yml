@@ -22,7 +22,17 @@ jobs:
         with:
           python-version: "3.11"
 
-      - uses: browniebroke/pre-commit-autoupdate-action@main
+      - name: Install pre-commit
+        run: pip install pre-commit
+
+      - name: Update hooks
+        run: pre-commit autoupdate
+
+      - name: Check for changes
+        id: changes
+        run: |
+          git add .pre-commit-config.yaml
+          git diff --staged --quiet || echo "changed=true" >> $GITHUB_OUTPUT
 
       - name: Create Pull Request
         if: steps.changes.outputs.changed == 'true'
