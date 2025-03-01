@@ -2,9 +2,22 @@
 import json.decoder
 import time
 import subprocess
+import sys
 from typing import TypedDict, List
 import json
 from datetime import datetime
+
+def check_gh_cli():
+    try:
+        result = subprocess.run(['gh', '--version'], capture_output=True, text=True)
+        if result.returncode != 0:
+            print("Error: GitHub CLI (gh) is not installed or not in PATH")
+            sys.exit(1)
+        version = result.stdout.split()[2]  # Get version number from output
+        print(f"Using GitHub CLI version: {version}")
+    except FileNotFoundError:
+        print("Error: GitHub CLI (gh) is not installed")
+        sys.exit(1)
 
 
 class Check(TypedDict):
