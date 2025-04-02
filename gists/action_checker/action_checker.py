@@ -1,4 +1,8 @@
-#!/usr/bin/python3
+# /// script
+# requires-python = ">=3.12"
+# dependencies = []
+# ///
+
 import json.decoder
 import time
 import subprocess
@@ -62,12 +66,20 @@ def pr_checker() -> List[Check]:
     raise SystemExit(1, "Cannot parse gh pr checks output")
 
 
-if __name__ == "__main__":
-    """Main function."""
-    pr_checks = pr_checker()
-    while {"IN_PROGRESS", "QUEUED"}.intersection([i["result"] for i in pr_checks]):
+def main() -> int:
+    """Entry point for the action-checker command-line tool."""
+    try:
         pr_checks = pr_checker()
-        time.sleep(3)
+        while {"IN_PROGRESS", "QUEUED"}.intersection([i["result"] for i in pr_checks]):
+            pr_checks = pr_checker()
+            time.sleep(3)
 
-    subprocess.call(["notify-send", notification_msg(pr_checks)])
-    raise SystemExit(0)
+        subprocess.call(["notify-send", notification_msg(pr_checks)])
+        return 0
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        return 1
+
+
+if __name__ == "__main__":
+    exit(main())
