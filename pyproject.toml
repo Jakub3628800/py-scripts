@@ -11,4 +11,4 @@ dependencies = [
 ]
 
 [project.scripts]
-webp-converter = "webp_converter.webp_converter"
+webp-converter = "gists.webp_converter.webp_converter:main"

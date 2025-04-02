@@ -51,7 +51,8 @@ def convert_webp_to_jpg(input_path, output_path=None):
     except IOError as e:
         raise IOError(f"Error saving output file: {output_path}") from e
 
-if __name__ == "__main__":
+def main():
+    """Entry point for the webp-converter command-line tool."""
     # Set up argument parser
     parser = argparse.ArgumentParser(description='Convert WebP images to JPG format')
     parser.add_argument('input', help='Input WebP file path')
@@ -63,6 +64,10 @@ if __name__ == "__main__":
     # Convert the image
     try:
         convert_webp_to_jpg(args.input, args.output)
+        return 0
     except (FileNotFoundError, ValueError, IOError) as e:
         print(f"Error: {str(e)}")
-        exit(1)
+        return 1
+
+if __name__ == "__main__":
+    exit(main())
