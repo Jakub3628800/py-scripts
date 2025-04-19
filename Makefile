@@ -25,6 +25,6 @@ install:
 
 .PHONY: test
 test:
-	python3 -m pytest py-scripts/file_mapper/tests/
-	python3 -m pytest py-scripts/make_commit/tests/
-	python3 -m pytest py-scripts/webp_converter/tests/
+	uv run pytest py-scripts/file_mapper/tests/
+	uv run pytest py-scripts/make_commit/tests/
+	uv run pytest py-scripts/webp_converter/tests/
