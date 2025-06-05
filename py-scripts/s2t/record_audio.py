@@ -7,8 +7,14 @@ import time
 from datetime import datetime
 
 # Function to send desktop notifications
-def send_notification(message):
-    subprocess.run(['/usr/bin/notify-send', '-t', '5000', 'Audio Recording', message])
+def send_notification(message: str) -> None:
+    subprocess.run([
+        '/usr/bin/notify-send',
+        '-t',
+        '5000',
+        'Audio Recording',
+        message,
+    ])
 
 # Use local tmp directory - uncomment to save in tmp folder
 # tmp_dir = os.path.abspath("tmp")
