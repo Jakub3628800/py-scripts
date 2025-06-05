@@ -9,7 +9,7 @@ from PIL import Image
 import os
 import argparse
 
-def convert_webp_to_jpg(input_path, output_path=None):
+def convert_webp_to_jpg(input_path: str, output_path: str | None = None) -> None:
     """
     Convert a WebP image to JPG format
     Args:
@@ -51,7 +51,7 @@ def convert_webp_to_jpg(input_path, output_path=None):
     except IOError as e:
         raise IOError(f"Error saving output file: {output_path}") from e
 
-def main():
+def main() -> int:
     """Entry point for the webp-converter command-line tool."""
     # Set up argument parser
     parser = argparse.ArgumentParser(description='Convert WebP images to JPG format')
@@ -59,7 +59,7 @@ def main():
     parser.add_argument('-o', '--output', help='Output JPG file path (optional)', default=None)
 
     # Parse arguments
-    args = parser.parse_args()
+    args: argparse.Namespace = parser.parse_args()
 
     # Convert the image
     try:
