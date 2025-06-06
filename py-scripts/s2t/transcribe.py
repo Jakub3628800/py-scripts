@@ -13,6 +13,7 @@ import logging
 import json
 import subprocess
 from pathlib import Path
+from typing import Any
 
 # Set up logging
 logger = logging.getLogger("transcribe")
@@ -24,7 +25,7 @@ logger.addHandler(handler)
 # Default to only showing warnings and errors
 logger.setLevel(logging.WARNING)
 
-def send_notification(title, message, debug=False):
+def send_notification(title: str, message: str, debug: bool = False) -> None:
     """Send desktop notification if debug is enabled"""
     if debug:
         try:
@@ -32,8 +33,14 @@ def send_notification(title, message, debug=False):
         except Exception as e:
             logger.warning(f"Could not send notification: {e}")
 
-def transcribe_audio(audio_file_path, debug=False, language=None, prompt=None,
-                    temperature=0.0, timestamps=False):
+def transcribe_audio(
+    audio_file_path: str,
+    debug: bool = False,
+    language: str | None = None,
+    prompt: str | None = None,
+    temperature: float = 0.0,
+    timestamps: bool = False,
+) -> Any:
     """Transcribe audio file using OpenAI Whisper API"""
     # Enable debug logging if requested
     if debug:
