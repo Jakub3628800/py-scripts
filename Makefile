@@ -3,19 +3,23 @@
 
 # Default target
 .PHONY: all
-all: file_mapper make_commit webp_converter
+all: action_checker file_mapper make_commit webp_converter
+
+.PHONY: action_checker
+action_checker:
+	$(MAKE) -C py-scripts/action_checker
 
 .PHONY: file_mapper
 file_mapper:
-	$(MAKE) -C file_mapper
+	$(MAKE) -C py-scripts/file_mapper
 
 .PHONY: make_commit
 make_commit:
-	$(MAKE) -C make_commit
+	$(MAKE) -C py-scripts/make_commit
 
 .PHONY: webp_converter
 webp_converter:
-	$(MAKE) -C webp_converter
+	$(MAKE) -C py-scripts/webp_converter
 
 .PHONY: install
 install:
@@ -25,6 +29,7 @@ install:
 
 .PHONY: test
 test:
+	uv run pytest py-scripts/action_checker/tests/
 	uv run pytest py-scripts/file_mapper/tests/
 	uv run pytest py-scripts/make_commit/tests/
 	uv run pytest py-scripts/webp_converter/tests/
