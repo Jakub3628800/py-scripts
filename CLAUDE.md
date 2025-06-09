@@ -24,6 +24,7 @@ This is a collection of standalone Python scripts organized as utilities. Each s
 **webp_converter**: Converts WebP images to JPG using Pillow
 **clipboardtools**: Wayland clipboard history with fzf search
 **s2t**: Speech-to-text transcription using OpenAI API
+**tmux_picker**: Interactive tmux session browser with live preview and vim-style navigation
 
 ## Script Dependencies
 
@@ -31,6 +32,7 @@ Scripts use uv script headers for dependency management. Prerequisites:
 - file_mapper: `entr`
 - action_checker: `gh` CLI
 - clipboardtools: `wl-clipboard`, `fzf`
+- tmux_picker: `tmux`
 
 ## Environment Variables
 
