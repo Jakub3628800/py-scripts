@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import patch
 
-from file_mapper import map_to_test_file
+from py_scripts.file_mapper.file_mapper import map_to_test_file
 
 @pytest.mark.parametrize("test_case", [
     ("__pycache__/something.py", None),
