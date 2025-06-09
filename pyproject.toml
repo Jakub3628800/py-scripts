@@ -14,3 +14,4 @@ dependencies = [
 webp-converter = "py_scripts.webp_converter.webp_converter:main"
 action-checker = "py_scripts.action_checker.action_checker:main"
 tmux-picker = "py_scripts.tmux_picker.tmux_picker:main"
+
