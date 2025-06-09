@@ -1,5 +1,5 @@
 [project]
-name = "gists"
+name = "py-scripts"
 version = "0.1.0"
 description = "Collection of scripts."
 readme = "README.md"
@@ -11,6 +11,6 @@ dependencies = [
 ]
 
 [project.scripts]
-webp-converter = "gists.webp_converter.webp_converter:main"
-action-checker = "gists.action_checker.action_checker:main"
-tmux-picker = "gists.tmux_picker.tmux_picker:main"
+webp-converter = "py_scripts.webp_converter.webp_converter:main"
+action-checker = "py_scripts.action_checker.action_checker:main"
+tmux-picker = "py_scripts.tmux_picker.tmux_picker:main"
