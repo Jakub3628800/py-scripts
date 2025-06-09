@@ -3,7 +3,7 @@ import os
 from PIL import Image
 import tempfile
 import shutil
-from webp_converter import convert_webp_to_jpg
+from py_scripts.webp_converter.webp_converter import convert_webp_to_jpg
 
 class TestWebPConverter:
     @pytest.fixture
