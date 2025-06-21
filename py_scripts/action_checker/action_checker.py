@@ -118,7 +118,10 @@ StandardError=journal
         print("Navigate to a directory with an open PR before running this script")
         return
 
-    subprocess.run(["systemctl", "--user", "start", "pr-check-monitor.service"], check=True)
+    subprocess.run(
+        ["systemctl", "--user", "start", "--no-block", "pr-check-monitor.service"],
+        check=True,
+    )
 
     print("Started systemd service: pr-check-monitor.service")
     print("Check status: systemctl --user status pr-check-monitor.service")
