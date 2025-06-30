@@ -1,27 +1,28 @@
-# Python Scripts Collection
+# py-scripts
 
-Collection of standalone Python utilities for development workflows.
+Collection of standalone misc Python scripts.
 
 ## Available Scripts
 
-- **tmux-picker**: Interactive tmux session browser with live preview
-- **action-checker**: Monitor GitHub PR checks via gh CLI
-- **webp-converter**: Convert WebP images to JPG
-- **file-mapper**: Map source files to test files for hot-reload
+- **cmd-picker**: Interactive command picker for tmux, docker, and gh request (scroll with jk + preview)
+- **action-checker**: invoke on opening PR, get a success/fail notification when actions finish running
+- **webp-converter**: webp to jpg cli
+- **file-mapper**: map source files to test files
+    - for hotreloading
 
 ## Usage
 
 ### One-time execution (uvx)
 Run scripts individually without installing:
 
-```bash
-# Tmux session picker
-uvx --from git+https://github.com/Jakub3628800/py-scripts tmux-picker
-
-# GitHub action checker
+```sh
+uvx --from git+https://github.com/Jakub3628800/py-scripts cmd-picker tmux
+```
+```sh
 uvx --from git+https://github.com/Jakub3628800/py-scripts action-checker
+```
 
-# WebP converter
+```sh
 uvx --from git+https://github.com/Jakub3628800/py-scripts webp-converter input.webp
 ```
 
@@ -29,18 +30,13 @@ uvx --from git+https://github.com/Jakub3628800/py-scripts webp-converter input.w
 For repeated use, install as tools to avoid reconfiguring dependencies:
 
 ```bash
-# Install all scripts as persistent tools
 uv tool install git+https://github.com/Jakub3628800/py-scripts
-
-# Now run directly (faster, deps cached)
-tmux-picker
-action-checker
-webp-converter input.webp
 ```
+After installing uv tool, all of the scripts should be in your path.
 
 ## Prerequisites
 
-- **tmux-picker**: tmux
+- **cmd-picker**: tmux, docker, gh CLI (depending on tool used)
 - **action-checker**: gh CLI
 - **file-mapper**: entr
 - **clipboardtools**: wl-clipboard, fzf
