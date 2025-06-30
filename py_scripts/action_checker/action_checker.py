@@ -102,9 +102,6 @@ StandardError=journal
     service_file = systemd_dir / "pr-check-monitor.service"
     service_file.write_text(service_content)
 
-    # Reload and start service
-    subprocess.run(["systemctl", "--user", "daemon-reload"], check=True)
-
     # Check if there's a PR first
     try:
         subprocess.run(
@@ -118,13 +115,14 @@ StandardError=journal
         print("Navigate to a directory with an open PR before running this script")
         return
 
+    # Reload daemon only if needed and start service
+    subprocess.run(["systemctl", "--user", "daemon-reload"], check=True)
     subprocess.run(
         ["systemctl", "--user", "start", "--no-block", "pr-check-monitor.service"],
         check=True,
     )
 
-    print("Started systemd service: pr-check-monitor.service")
-    print("Check status: systemctl --user status pr-check-monitor.service")
+    print("Monitoring PR checks in background...")
     print("View logs: journalctl --user -u pr-check-monitor.service -f")
 
 
