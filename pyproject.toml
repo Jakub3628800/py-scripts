@@ -1,0 +1,16 @@
+[project]
+name = "py-scripts"
+version = "0.1.0"
+description = "Collection of scripts."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pillow>=11.0.0",
+    "pytest>=8.3.3",
+    "requests>=2.32.3",
+]
+
+[project.scripts]
+webp-converter = "py_scripts.webp_converter.webp_converter:main"
+action-checker = "py_scripts.action_checker.action_checker:main"
+cmd-picker = "py_scripts.cmd_picker.cmd_picker:main"
