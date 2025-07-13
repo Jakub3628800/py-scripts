@@ -1,3 +1,10 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.uv]
+package = true
+
 [project]
 name = "py-scripts"
 version = "0.1.0"
@@ -8,9 +15,15 @@ dependencies = [
     "pillow>=11.0.0",
     "pytest>=8.3.3",
     "requests>=2.32.3",
+    "pywhispercpp>=1.3.0",
+    "pyaudio>=0.2.11",
+    "webrtcvad>=2.0.10",
+    "numpy>=1.24.0",
+    "setuptools>=61.0",
 ]
 
 [project.scripts]
 webp-converter = "py_scripts.webp_converter.webp_converter:main"
 action-checker = "py_scripts.action_checker.action_checker:main"
 cmd-picker = "py_scripts.cmd_picker.cmd_picker:main"
+s2t = "py_scripts.s2t.s2t:main"
