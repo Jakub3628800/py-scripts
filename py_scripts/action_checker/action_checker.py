@@ -35,10 +35,7 @@ def notification_msg(pr_checks: List[Check]) -> str:
 
 
 def dt_diff(dt1: str, dt2: str) -> str:
-    return str(
-        datetime.strptime(dt1, "%Y-%m-%dT%H:%M:%SZ")
-        - datetime.strptime(dt2, "%Y-%m-%dT%H:%M:%SZ")
-    )
+    return str(datetime.strptime(dt1, "%Y-%m-%dT%H:%M:%SZ") - datetime.strptime(dt2, "%Y-%m-%dT%H:%M:%SZ"))
 
 
 def pr_checker() -> List[Check]:
@@ -50,7 +47,7 @@ def pr_checker() -> List[Check]:
                 ["gh", "pr", "checks", "--json=name,state,link,startedAt,completedAt"],
                 capture_output=True,
                 text=True,
-                check=True
+                check=True,
             )
             output = json.loads(result.stdout)
             return [
@@ -85,8 +82,8 @@ After=network.target
 [Service]
 Type=oneshot
 RemainAfterExit=no
-Environment=HOME={os.environ['HOME']}
-Environment=PATH=/home/{os.environ.get('USER', 'user')}/.local/bin:/usr/local/bin:/usr/bin:/bin
+Environment=HOME={os.environ["HOME"]}
+Environment=PATH=/home/{os.environ.get("USER", "user")}/.local/bin:/usr/local/bin:/usr/bin:/bin
 WorkingDirectory={os.getcwd()}
 ExecStart=/usr/bin/env uv run {script_path} --monitor
 TimeoutStartSec=1800
@@ -104,12 +101,7 @@ StandardError=journal
 
     # Check if there's a PR first
     try:
-        subprocess.run(
-            ["gh", "pr", "view", "--json=url"],
-            capture_output=True,
-            text=True,
-            check=True
-        )
+        subprocess.run(["gh", "pr", "view", "--json=url"], capture_output=True, text=True, check=True)
     except subprocess.CalledProcessError:
         print("No pull request found in current directory")
         print("Navigate to a directory with an open PR before running this script")

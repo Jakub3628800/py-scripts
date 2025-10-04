@@ -3,7 +3,8 @@ import os
 import sys
 import subprocess
 import glob
-from typing import  Optional
+from typing import Optional
+
 
 def map_to_test_file(changed_file: str) -> Optional[str]:
     """Map a source file to its corresponding test file, if applicable."""
@@ -14,7 +15,7 @@ def map_to_test_file(changed_file: str) -> Optional[str]:
         return changed_file
 
     all_parts = [f"test_{part}" for part in changed_file.split("/")]
-    a = '/'.join(all_parts)
+    a = "/".join(all_parts)
     print(a)
     for match in glob.glob(f"tests/*/{a}"):
         return match
@@ -27,6 +28,7 @@ def map_to_test_file(changed_file: str) -> Optional[str]:
         return match
 
     return None
+
 
 def run_pytest_on_mapped_file(changed_file: str) -> None:
     """Run pytest on the mapped test file, if applicable."""
