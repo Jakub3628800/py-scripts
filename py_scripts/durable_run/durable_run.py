@@ -6,7 +6,6 @@
 
 import subprocess
 import sys
-import argparse
 import re
 
 
@@ -107,40 +106,50 @@ def run_durable_command(command: list[str], unit_name: str | None = None) -> int
 
 def main() -> int:
     """Entry point for the durable-run command-line tool."""
-    parser = argparse.ArgumentParser(
-        description="Run a command as a systemd user service and follow its logs",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
-Examples:
-  # Test with a command that prints every second
-  durable-run bash -c 'while true; do date; sleep 1; done'
+    # Manual argument parsing to handle command pass-through like sudo
+    unit_name = None
+    command_start_idx = 1  # Start after script name
 
-  # Run a web server
-  durable-run python -m http.server 8080
+    # Check for --unit flag
+    if len(sys.argv) > 1 and sys.argv[1] == "--unit":
+        if len(sys.argv) < 4:
+            print("Error: --unit requires a value and a command", file=sys.stderr)
+            print("\nUsage: durable-run [--unit NAME] COMMAND [ARGS...]", file=sys.stderr)
+            print("\nExamples:", file=sys.stderr)
+            print("  durable-run bash -c 'while true; do date; sleep 1; done'", file=sys.stderr)
+            print("  durable-run python -m http.server 8080", file=sys.stderr)
+            print("  durable-run --unit my-service bash -c 'echo hello'", file=sys.stderr)
+            return 1
+        unit_name = sys.argv[2]
+        command_start_idx = 3
+    elif len(sys.argv) > 1 and sys.argv[1] in ["-h", "--help"]:
+        print("Usage: durable-run [--unit NAME] COMMAND [ARGS...]")
+        print("\nRun a command as a systemd user service and follow its logs")
+        print("\nOptions:")
+        print("  --unit NAME    Custom unit name for the service")
+        print("  -h, --help     Show this help message")
+        print("\nExamples:")
+        print("  # Test with a command that prints every second")
+        print("  durable-run bash -c 'while true; do date; sleep 1; done'")
+        print("")
+        print("  # Run a web server")
+        print("  durable-run python -m http.server 8080")
+        print("")
+        print("  # With custom unit name")
+        print("  durable-run --unit my-counter bash -c 'i=0; while true; do echo Count: $i; i=$((i+1)); sleep 1; done'")
+        print("\nThe command will run in the background as a systemd user service.")
+        print("Press Ctrl+C to detach from logs (the service keeps running).")
+        return 0
 
-  # With custom unit name
-  durable-run --unit my-counter -- bash -c 'i=0; while true; do echo "Count: $i"; i=$((i+1)); sleep 1; done'
+    # Get the command (everything from command_start_idx onwards)
+    if len(sys.argv) <= command_start_idx:
+        print("Error: No command specified", file=sys.stderr)
+        print("\nUsage: durable-run [--unit NAME] COMMAND [ARGS...]", file=sys.stderr)
+        return 1
 
-The command will run in the background as a systemd user service.
-Press Ctrl+C to detach from logs (the service keeps running).
-        """,
-    )
+    command = sys.argv[command_start_idx:]
 
-    parser.add_argument(
-        "--unit",
-        help="Custom unit name for the service",
-        default=None,
-    )
-
-    parser.add_argument(
-        "command",
-        nargs="+",
-        help="Command to run",
-    )
-
-    args = parser.parse_args()
-
-    return run_durable_command(args.command, args.unit)
+    return run_durable_command(command, unit_name)
 
 
 if __name__ == "__main__":
