@@ -14,3 +14,4 @@ dependencies = [
 webp-converter = "py_scripts.webp_converter.webp_converter:main"
 action-checker = "py_scripts.action_checker.action_checker:main"
 cmd-picker = "py_scripts.cmd_picker.cmd_picker:main"
+durable-run = "py_scripts.durable_run.durable_run:main"
