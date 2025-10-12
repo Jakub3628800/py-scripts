@@ -9,6 +9,7 @@ Collection of standalone misc Python scripts.
 - **webp-converter**: webp to jpg cli
 - **file-mapper**: map source files to test files
     - for hotreloading
+- **durable-run**: wrapper around systemd-run that follows logs and provides clear detach instructions
 
 ## Usage
 
@@ -26,6 +27,10 @@ uvx --from git+https://github.com/Jakub3628800/py-scripts action-checker
 uvx --from git+https://github.com/Jakub3628800/py-scripts webp-converter input.webp
 ```
 
+```sh
+uvx --from git+https://github.com/Jakub3628800/py-scripts durable-run bash -c 'while true; do date; sleep 1; done'
+```
+
 ### Persistent installation (uv tool)
 For repeated use, install as tools to avoid reconfiguring dependencies:
 
@@ -40,3 +45,4 @@ After installing uv tool, all of the scripts should be in your path.
 - **action-checker**: gh CLI
 - **file-mapper**: entr
 - **clipboardtools**: wl-clipboard, fzf
+- **durable-run**: systemd, journalctl
