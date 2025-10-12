@@ -8,7 +8,7 @@ import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 
-from py_scripts.durable_run.durable_run import extract_unit_name, run_durable_command
+from py_scripts.durable_run.durable_run import extract_unit_name, run_durable_command, main
 
 
 class TestExtractUnitName:
@@ -122,6 +122,74 @@ class TestRunDurableCommand:
 
         result = run_durable_command(["echo", "test"])
 
+        assert result == 1
+
+
+class TestMain:
+    @patch("subprocess.run")
+    @patch("sys.argv", ["durable-run", "bash", "-c", "echo hello"])
+    def test_main_bash_c(self, mock_run):
+        mock_run.side_effect = [
+            Mock(returncode=0, stdout="", stderr="Running as unit: run-u12345.service"),
+            KeyboardInterrupt(),
+        ]
+
+        result = main()
+        assert result == 0
+
+        # Verify command was passed correctly
+        first_call = mock_run.call_args_list[0]
+        cmd = first_call[0][0]
+        assert "bash" in cmd
+        assert "-c" in cmd
+        assert "echo hello" in cmd
+
+    @patch("subprocess.run")
+    @patch("sys.argv", ["durable-run", "python", "-m", "http.server", "8080"])
+    def test_main_python_m(self, mock_run):
+        mock_run.side_effect = [
+            Mock(returncode=0, stdout="", stderr="Running as unit: run-u12345.service"),
+            KeyboardInterrupt(),
+        ]
+
+        result = main()
+        assert result == 0
+
+        # Verify command was passed correctly
+        first_call = mock_run.call_args_list[0]
+        cmd = first_call[0][0]
+        assert "python" in cmd
+        assert "-m" in cmd
+        assert "http.server" in cmd
+        assert "8080" in cmd
+
+    @patch("subprocess.run")
+    @patch("sys.argv", ["durable-run", "--unit", "my-service", "sleep", "10"])
+    def test_main_with_unit(self, mock_run):
+        mock_run.side_effect = [
+            Mock(returncode=0, stdout="", stderr="Running as unit: my-service.service"),
+            KeyboardInterrupt(),
+        ]
+
+        result = main()
+        assert result == 0
+
+        # Verify --unit was handled correctly
+        first_call = mock_run.call_args_list[0]
+        cmd = first_call[0][0]
+        assert "--unit" in cmd
+        assert "my-service" in cmd
+        assert "sleep" in cmd
+        assert "10" in cmd
+
+    @patch("sys.argv", ["durable-run", "--help"])
+    def test_main_help(self):
+        result = main()
+        assert result == 0
+
+    @patch("sys.argv", ["durable-run"])
+    def test_main_no_command(self):
+        result = main()
         assert result == 1
 
 
